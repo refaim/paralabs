@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <pthread.h>
 
-#define PTCALLEX(call, retcode) \
+#define PThreadCallEx(call, retcode) \
     { \
         int result; \
         result = call; \
@@ -13,5 +13,4 @@
         } \
     }
 
-#define PTCALL(call) PTCALLEX(call, EXIT_FAILURE)
-
+#define PThreadCall(call) PThreadCallEx(call, EXIT_FAILURE)

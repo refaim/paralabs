@@ -39,8 +39,8 @@ int main()
 {
     pthread_t first, second;
 
-    PTCALL(pthread_create(&first, NULL, first_body, NULL))
-    PTCALL(pthread_create(&second, NULL, second_body, NULL))
-    PTCALL(pthread_join(first, NULL))
-    PTCALL(pthread_join(second, NULL))
+    PThreadCall(pthread_create(&first, NULL, first_body, NULL))
+    PThreadCall(pthread_create(&second, NULL, second_body, NULL))
+    PThreadCall(pthread_join(first, NULL))
+    PThreadCall(pthread_join(second, NULL))
 }

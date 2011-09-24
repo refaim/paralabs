@@ -29,7 +29,7 @@ void* second_body(void *arg)
 {
     pthread_t* blocker = (pthread_t*)arg;
 
-    PTCALLEX(pthread_join(*blocker, NULL), NULL)
+    PThreadCallEx(pthread_join(*blocker, NULL), NULL)
     printf("second\n");
 }
 
@@ -37,7 +37,7 @@ int main()
 {
     pthread_t first, second;
 
-    PTCALL(pthread_create(&first, NULL, first_body, NULL))
-    PTCALL(pthread_create(&second, NULL, second_body, &first))
-    PTCALL(pthread_join(second, NULL))
+    PThreadCall(pthread_create(&first, NULL, first_body, NULL))
+    PThreadCall(pthread_create(&second, NULL, second_body, &first))
+    PThreadCall(pthread_join(second, NULL))
 }
