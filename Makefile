@@ -1,7 +1,8 @@
 .PHONY: clean
 
-CFLAGS += -D_REENTERANT -I/usr/include/nptl -I. -L/usr/lib/nptl -lpthread -std=c99
-
+INCLUDES=-I. -I/usr/include/nptl
+CFLAGS=-std=c99 -D_REENTERANT $(INCLUDES)
+LDFLAGS=-L/usr/lib/nptl -lpthread
 clean:
 	rm -f t01 t02 t03
 
