@@ -54,10 +54,10 @@ int main()
 {
     pthread_t first, second, third;
 
-    PThreadCall(pthread_create(&first, NULL, first_body, NULL))
-    PThreadCall(pthread_create(&second, NULL, second_body, NULL))
-    PThreadCall(pthread_create(&third, NULL, third_body, NULL))
-    PThreadCall(pthread_join(first, NULL))
-    PThreadCall(pthread_join(second, NULL))
-    PThreadCall(pthread_join(third, NULL))
+    PCheck(pthread_create(&first, NULL, first_body, NULL));
+    PCheck(pthread_create(&second, NULL, second_body, NULL));
+    PCheck(pthread_create(&third, NULL, third_body, NULL));
+    PCheck(pthread_join(first, NULL));
+    PCheck(pthread_join(second, NULL));
+    PCheck(pthread_join(third, NULL));
 }
