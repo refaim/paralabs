@@ -1,10 +1,17 @@
 .PHONY: clean
 
-INCLUDES=-I. -I/usr/include/nptl
-CFLAGS=-std=c99 -D_REENTERANT $(INCLUDES)
-LDFLAGS=-L/usr/lib/nptl -lpthread
+INCLUDES = -I.
+CFLAGS += -Wall -Wextra -pedantic -std=c99
+
+BINARIES = $(patsubst %.c, %, $(wildcard *.c))
+
+all: $(BINARIES)
+
+%_pt: %_pt.c
+	$(CC) -o $@ $(CFLAGS) $(INCLUDES) -pthread $(LDFLAGS) $^
+
+%_omp: %_omp.c
+	$(CC) -o $@ $(CFLAGS) $(INCLUDES) -fopenmp $(LDFLAGS) $^
+
 clean:
-	rm -f t01 t02 t03
-
-t%: t@.c
-
+	$(RM) $(BINARIES)
