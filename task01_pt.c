@@ -10,7 +10,7 @@
 #define CALC_VALUE 10000.0f
 
 
-void* first_body(void* arg)
+void* first_body(void* UNUSED(arg))
 {
     double root;
     double value = CALC_VALUE;
@@ -23,6 +23,8 @@ void* first_body(void* arg)
     }
     printf("%d iterations\n", i);
     printf("first: stop\n");
+
+    return NULL;
 }
 
 void* second_body(void *arg)
@@ -31,6 +33,8 @@ void* second_body(void *arg)
 
     PCheck(pthread_join(*blocker, NULL));
     printf("second\n");
+
+    return NULL;
 }
 
 int main()
@@ -40,4 +44,6 @@ int main()
     PCheck(pthread_create(&first, NULL, first_body, NULL));
     PCheck(pthread_create(&second, NULL, second_body, &first));
     PCheck(pthread_join(second, NULL));
+
+    return EXIT_SUCCESS;
 }

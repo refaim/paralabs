@@ -11,7 +11,7 @@ int gCounter = 0;
 int gOther = 0;
 int gbPrinted = 1;
 
-void* first_body(void* arg)
+void* first_body(void* UNUSED(arg))
 {
     for (int i = 2; i <= N; i += 2)
     {
@@ -22,9 +22,10 @@ void* first_body(void* arg)
         gbPrinted = 0;
         gCounter = i;
     }
+    return NULL;
 }
 
-void* second_body(void *arg)
+void* second_body(void* UNUSED(arg))
 {
     for (int i = 1; i <= N + 1; i += 2)
     {
@@ -35,9 +36,10 @@ void* second_body(void *arg)
         gbPrinted = 0;
         gCounter = i;
     }
+    return NULL;
 }
 
-void* third_body(void* arg)
+void* third_body(void* UNUSED(arg))
 {
     while (gCounter <= N+1)
     {
@@ -48,6 +50,7 @@ void* third_body(void* arg)
             gbPrinted = 1;
         }
     }
+    return NULL;
 }
 
 int main()
@@ -60,4 +63,6 @@ int main()
     PCheck(pthread_join(first, NULL));
     PCheck(pthread_join(second, NULL));
     PCheck(pthread_join(third, NULL));
+
+    return EXIT_SUCCESS;
 }
