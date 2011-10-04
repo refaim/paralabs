@@ -1,6 +1,6 @@
 .PHONY: clean
 
-INCLUDES = -I.
+INCLUDES = -I$(CURDIR)
 CFLAGS += -Wall -Wextra -pedantic -std=c99
 
 BINARIES = $(patsubst %.c, %, $(wildcard *.c))
