@@ -3,7 +3,7 @@
 #include <pthread.h>
 #include <unistd.h>
 
-#include <pp.h>
+#include "paralabs.h"
 
 #define N 120
 

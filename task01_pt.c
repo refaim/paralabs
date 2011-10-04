@@ -4,7 +4,7 @@
 #define __USE_BSD
 #include <math.h>
 
-#include <pp.h>
+#include "paralabs.h"
 
 #define MAXN 10000000
 #define CALC_VALUE 10000.0f

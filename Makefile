@@ -1,6 +1,5 @@
 .PHONY: clean
 
-INCLUDES = -I$(CURDIR)
 CFLAGS += -Wall -Wextra -pedantic -std=c99
 
 BINARIES = $(patsubst %.c, %, $(wildcard *.c))
@@ -8,10 +7,10 @@ BINARIES = $(patsubst %.c, %, $(wildcard *.c))
 all: $(BINARIES)
 
 %_pt: %_pt.c
-	$(CC) -o $@ $(CFLAGS) $(INCLUDES) -pthread $(LDFLAGS) $^
+	$(CC) -o $@ $(CFLAGS) -pthread $(LDFLAGS) $^
 
 %_omp: %_omp.c
-	$(CC) -o $@ $(CFLAGS) $(INCLUDES) -fopenmp $(LDFLAGS) $^
+	$(CC) -o $@ $(CFLAGS) -fopenmp $(LDFLAGS) $^
 
 clean:
 	$(RM) $(BINARIES)
