@@ -6,7 +6,9 @@
 #include <sys/time.h>
 #include <malloc.h>
 
-int main (int argc, char *argv[])
+#include "paralabs.h"
+
+int main (int UNUSED(argc), char *argv[])
 {
   int i,j,k;
   float *a,*b,*c;
