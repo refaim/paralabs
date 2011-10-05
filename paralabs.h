@@ -1,3 +1,6 @@
+#ifndef _PARALABS_H_
+#define _PARALABS_H_
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <pthread.h>
@@ -21,3 +24,5 @@ void check_pthread(int retcode, char* file, int line)
 }
 
 #define PCheck(call) check_pthread(call, __FILE__, __LINE__)
+
+#endif
