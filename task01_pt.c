@@ -1,6 +1,4 @@
 #include <stdio.h>
-#include <pthread.h>
-
 #define __USE_BSD
 #include <math.h>
 
