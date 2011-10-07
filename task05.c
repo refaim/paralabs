@@ -28,7 +28,7 @@ START_TEST(test_performance)
     uint max_threads = 8;
     size_t size_in_bytes = count * sizeof(int);
     int *raw = NULL;
-    int *current = malloc(size_in_bytes);
+    int *current = ALLOC_CHECK(malloc(size_in_bytes));
 
     generate_int_sequence(&raw, count);
 

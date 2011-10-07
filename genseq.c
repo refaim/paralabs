@@ -9,8 +9,7 @@ void generate_int_sequence(int **dest, uint count)
     gettimeofday(&tv, NULL);
     srand(tv.tv_sec + tv.tv_usec);
 
-    // :FIXME: check allocation
-    *dest = malloc(count * sizeof(int));
+    ALLOC_CHECK(*dest = malloc(count * sizeof(int)));
 
     for (uint i = 0; i < count; ++i)
     {

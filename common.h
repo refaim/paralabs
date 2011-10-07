@@ -17,6 +17,9 @@
 # define UNUSED(x) x
 #endif
 
+#define ALLOC_CHECK(mem) check_alloc(mem, __FILE__, __LINE__)
+void *check_alloc(void *memory, char* file, int line);
+
 double diff_to_sec(struct timeval *a, struct timeval *b);
 
 #endif
