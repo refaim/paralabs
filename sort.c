@@ -54,9 +54,8 @@ void insertionsort(void *base, uint num, size_t width, comparator_t comparator)
     for (i = 1; i < num; ++i)
     {
         j = i;
-        while (j > 0 && comparator(
-                            at(base, width, j - 1),
-                            at(base, width, j)) > 0)
+        while (j > 0 &&
+            comparator(at(base, width, j - 1), at(base, width, j)) > 0)
         {
             swap(at(base, width, j), at(base, width, j - 1), width);
             j--;
