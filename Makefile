@@ -27,5 +27,5 @@ endef
 $(foreach number, 01 02 03, $(call pthread_task, $(number)))
 $(call openmp_task, 04)
 LDFLAGS += $(CHECK_FLAGS)
-$(call openmp_task, 05, sort.c quicksort.c genseq.c)
-$(call openmp_task, 06, sort.c mergesort.c genseq.c)
+$(call openmp_task, 05, sort.c genseq.c quicksort.c)
+$(call openmp_task, 06, sort.c genseq.c mergesort.c quicksort.c)

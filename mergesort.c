@@ -1,6 +1,7 @@
 #include <omp.h>
 #include <string.h>
 #include "mergesort.h"
+#include "quicksort.h"
 
 #define PERFORMANCE_BARRIER 20
 
@@ -33,7 +34,7 @@ void mergesort(void *base, uint num, size_t width, comparator_t comparator)
 {
     if (num < PERFORMANCE_BARRIER)
     {
-        insertionsort(base, num, width, comparator);
+        quicksort(base, num, width, comparator);
     }
     else if (num > 1)
     {
