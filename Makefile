@@ -12,8 +12,8 @@ clean:
 	$(RM) $(BINARIES)
 
 define define_task
-$(1): $(1).c $(3)
-	$(CC) -o $$@ $(CFLAGS) $(2) $(LDFLAGS) $$^
+$(1): $(1).c common.c $(3)
+	$(CC) -o $$@ $(CFLAGS)$(2) $(LDFLAGS) $$^
 endef
 
 define pthread_task

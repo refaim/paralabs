@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <check.h>
-#include <time.h>
+#include <sys/time.h>
 #include <omp.h>
 #include "quicksort.h"
 #include "genseq.h"
@@ -41,20 +41,19 @@ START_TEST(test_performance)
 
         for (uint i = 0; i < max_tries; ++i)
         {
-            clock_t start, finish;
+            struct timeval tv1, tv2;
 
             memcpy(current, raw, size_in_bytes);
 
-            start = clock();
+            gettimeofday(&tv1, NULL);
             quicksort(current, count, sizeof(int), cmpint);
-            finish = clock();
+            gettimeofday(&tv2, NULL);
 
-            time += (double)(finish - start) / CLOCKS_PER_SEC;
+            time += diff_to_sec(&tv1, &tv2);
 
             fail_unless(check_order(current, count, sizeof(int), cmpint) == 0,
                 "Error in quicksort algorithm");
         }
-
         printf("%u threads, %.2f seconds\n", tnum, time / max_tries);
     }
     free(current);

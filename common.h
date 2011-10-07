@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <pthread.h>
+#include <sys/time.h>
 
 #define uint unsigned int
 
@@ -15,5 +16,7 @@
 #else
 # define UNUSED(x) x
 #endif
+
+double diff_to_sec(struct timeval *a, struct timeval *b);
 
 #endif
