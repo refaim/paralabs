@@ -1,8 +1,6 @@
 #include <omp.h>
 #include "quicksort.h"
 
-#define PERFORMANCE_BARRIER 20
-
 uint partition(void *base, uint num, size_t width, comparator_t comparator)
 {
     void *fixed = at(base, width, num - 1);
@@ -23,11 +21,7 @@ uint partition(void *base, uint num, size_t width, comparator_t comparator)
 
 void _quicksort(void* base, uint num, size_t width, comparator_t comparator)
 {
-    if (num < PERFORMANCE_BARRIER)
-    {
-        insertionsort(base, num, width, comparator);
-    }
-    else if (num > 1)
+    if (num > 1)
     {
         uint pivot = partition(base, num, width, comparator);
 
