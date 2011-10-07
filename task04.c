@@ -32,11 +32,9 @@ int main (int UNUSED(argc), char *argv[])
 
   gettimeofday(&timev1,NULL);
 
-  #pragma omp parallel for
+  #pragma omp parallel for private(j, k)
   for (i=0; i<N; i++)
-    #pragma omp parallel for
     for (k=0; k<N; k++)
-      #pragma omp parallel for
       for (j=0; j<N; j++)
         c[i*N+j]+=a[i*N+k]*b[k*N+j];
 
