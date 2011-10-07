@@ -6,7 +6,7 @@
 #include <sys/time.h>
 #include <malloc.h>
 
-#include "paralabs.h"
+#include "common.h"
 
 int main (int UNUSED(argc), char *argv[])
 {

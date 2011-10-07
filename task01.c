@@ -2,7 +2,8 @@
 #define __USE_BSD
 #include <math.h>
 
-#include "paralabs.h"
+#include "pcheck.h"
+#include "common.h"
 
 #define MAXN 10000000
 #define CALC_VALUE 10000.0f

@@ -1,6 +1,7 @@
 #include <unistd.h>
 
-#include "paralabs.h"
+#include "pcheck.h"
+#include "common.h"
 
 #define N 120
 
