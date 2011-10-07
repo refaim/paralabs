@@ -1,7 +1,7 @@
 .PHONY: all clean
 
 CFLAGS += -Wall -Wextra -pedantic -std=c99
-CHECK_FLAGS = -Wl,--whole-archive -lcheck -Wl,--no-whole-archive
+CHECK_LDFLAGS = -Wl,--whole-archive -lcheck -Wl,--no-whole-archive
 
 PREFIX = task
 BINARIES = $(patsubst %.c, %, $(wildcard $(PREFIX)*.c))
@@ -26,6 +26,6 @@ endef
 
 $(foreach number, 01 02 03, $(call pthread_task, $(number)))
 $(call openmp_task, 04)
-LDFLAGS += $(CHECK_FLAGS)
+LDFLAGS += $(CHECK_LDFLAGS)
 $(call openmp_task, 05, sort.c genseq.c quicksort.c)
 $(call openmp_task, 06, sort.c genseq.c mergesort.c quicksort.c)
