@@ -1,7 +1,6 @@
 #include <stdio.h>
 #define __USE_BSD
 #include <math.h>
-
 #include "pcheck.h"
 #include "common.h"
 
