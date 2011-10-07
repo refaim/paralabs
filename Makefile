@@ -1,6 +1,6 @@
 .PHONY: all clean
 
-CFLAGS += -Wall -Wextra -pedantic -std=c99
+CFLAGS += -Wall -Wextra -pedantic -std=c99 -O2
 CHECK_FLAGS = -Wl,--whole-archive -lcheck -Wl,--no-whole-archive
 
 PREFIX = task
