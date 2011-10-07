@@ -15,4 +15,8 @@ void swap(char *a, char *b, size_t width);
 int cmpint(const void *n, const void *m);
 int cmpdouble(const void* n, const void* m);
 
+int check_order(void *base, uint num, size_t width, comparator_t comparator);
+
+void insertionsort(void *base, uint num, size_t width, comparator_t comparator);
+
 #endif

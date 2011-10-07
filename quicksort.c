@@ -1,6 +1,9 @@
+#include <omp.h>
 #include "quicksort.h"
 
-int partition(void *base, uint num, size_t width, comparator_t comparator)
+#define PERFORMANCE_BARRIER 20
+
+uint partition(void *base, uint num, size_t width, comparator_t comparator)
 {
     void *fixed = at(base, width, num - 1);
     void *current;
@@ -18,14 +21,31 @@ int partition(void *base, uint num, size_t width, comparator_t comparator)
     return i;
 }
 
-void quicksort(void* base, uint num, size_t width, comparator_t comparator)
+void _quicksort(void* base, uint num, size_t width, comparator_t comparator)
 {
-    if (num > 0)
+    if (num < PERFORMANCE_BARRIER)
     {
-        int pivot = partition(base, num, width, comparator);
-        quicksort(base, pivot, width, comparator);
-        quicksort(
+        insertionsort(base, num, width, comparator);
+    }
+    else if (num > 1)
+    {
+        uint pivot = partition(base, num, width, comparator);
+
+        #pragma omp task
+        _quicksort(base, pivot, width, comparator);
+
+        #pragma omp task
+        _quicksort(
             at(base, width, pivot + 1),
             num - pivot - 1, width, comparator);
+    }
+}
+
+void quicksort(void* base, uint num, size_t width, comparator_t comparator)
+{
+    #pragma omp parallel
+    {
+        #pragma omp single nowait
+        _quicksort(base, num, width, comparator);
     }
 }
