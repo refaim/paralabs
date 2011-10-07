@@ -23,8 +23,8 @@ END_TEST
 
 START_TEST(test_performance)
 {
-    uint count = 1e6;
-    uint max_tries = 5;
+    uint count = 1e7;
+    uint max_tries = 1;
     uint max_threads = 8;
     size_t size_in_bytes = count * sizeof(int);
     int *raw = NULL;
