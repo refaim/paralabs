@@ -8,7 +8,7 @@ def test(left, right):
 
     rabin = set(n for n in numbers if prime.miller_rabin(n))
     primes = set(n for n in numbers if prime.trivial(n))
-   
+
     errors = rabin - primes
 
     possible = len(rabin) - len(errors)
@@ -18,11 +18,14 @@ def test(left, right):
         len(primes)
     )
     if errors:
-        print '%d false positives' % len(errors)    
+        print '%d false positives' % len(errors)
 
 if __name__ == '__main__':
-    left, right = 1, 1000
-    while right <= 10 ** 7:
-        test(left, right)
-        left = right
-        right *= 10
+    try:
+        left, right = 1, 1000
+        while right <= 10 ** 7:
+            test(left, right)
+            left = right
+            right *= 10
+    except KeyboardInterrupt:
+        print 'Interrupted by user'
