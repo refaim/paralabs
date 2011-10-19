@@ -7,8 +7,7 @@ all: prime
 clean:
 	rm -rf build $(OBJS)
 
-prime: prime.pyd
-prime.pyd:
+prime:
 	cd prime && python setup.py install
 
 test: prime
