@@ -12,4 +12,4 @@ prime.pyd:
 	cd prime && python setup.py install
 
 test: prime
-	python test.py
+	python prime/test.py
