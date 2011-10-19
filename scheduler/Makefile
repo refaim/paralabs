@@ -1,6 +1,6 @@
 .PHONY: all clean prime test
 
-OBJS = $(foreach wc, *.pyc *.pyd *.egg-info, $(wildcard $(wc)))
+OBJS = $(foreach wc, *.pyc *.pyd *.egg-info *.so, $(wildcard $(wc)))
 
 all: prime
 
