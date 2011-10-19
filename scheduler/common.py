@@ -1,0 +1,13 @@
+﻿import re
+
+DEFAULT_ADDR = ('localhost', 8080)
+
+class SchedulerError(Exception): pass
+
+def parse_addr(raw):
+    match = re.match('(\w+?):(\d+)', raw)
+    if not match:
+        raise SchedulerError('invalid server address')
+    host, port = match.groups()
+    port = int(port)
+    return host, port
