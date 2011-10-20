@@ -1,5 +1,9 @@
 import sys
+import os
 import math
+
+parentdir = os.path.normpath(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.append(parentdir)
 import prime
 
 def test(left, right):
