@@ -102,7 +102,7 @@ static PyObject* prime_trivial(PyObject *self, PyObject *args)
     }
 
     bound = sqrt(n) + 1;
-    for (i = 2; i < bound; ++i)
+    for (i = 3; i < bound; ++i)
     {
         if (n % i == 0)
         {
