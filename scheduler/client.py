@@ -2,10 +2,13 @@ import sys
 import os
 import socket
 
+from utils import console
+
 import prime
 from common import *
 
 SERV_ADDR = None
+PROGRESS_ATOM = 20
 
 def connect():
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -31,10 +34,21 @@ def main(args):
         sock = connect()
         sock.send('Here')
 
-        bounds = tuple(int(x) for x in sock.recv(1024).split())
-        print 'Recieved [%d, %d]' % bounds
+        left, right = tuple(int(x) for x in sock.recv(1024).split())
+        print 'Recieved [%d, %d]' % (left, right)
 
-        primes = [x for x in xrange(*bounds) if prime.trivial(x)]
+        pbar = console.ProgressBar(right - left)
+        step = (right - left) / PROGRESS_ATOM
+
+        primes = []
+        for i, x in enumerate(xrange(left, right)):
+            if prime.miller_rabin(x):
+                primes.append(x)
+            if i % step == 0:
+                pbar.set(i)
+        pbar.finish()
+        pbar.clear()
+
         print '%d prime numbers found' % len(primes)
 
         sock.send(str(primes))

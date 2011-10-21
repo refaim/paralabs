@@ -6,7 +6,7 @@ from common import *
 
 class Dispatcher(object):
     def __init__(self):
-        self.interval = 50
+        self.interval = 10 ** 6
         self.left = 1
         self.right = self.interval
 
@@ -17,7 +17,7 @@ class Dispatcher(object):
         return bounds
 
     def put(self, primes):
-        print primes
+        pass
 
 
 class RequestHandler(SocketServer.BaseRequestHandler):
