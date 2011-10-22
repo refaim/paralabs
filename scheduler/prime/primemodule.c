@@ -2,8 +2,8 @@
 #include <math.h>
 #include <sys/time.h>
 
-#define number unsigned long
-#define big unsigned long long int
+#include "number.h"
+#include "myrand.h"
 
 // (a * b) % c
 inline number mulmod(number a, number b, number c)
@@ -50,7 +50,7 @@ static PyObject* prime_miller_rabin(PyObject *self, PyObject *args)
     number n, d;
     int i, rounds;
 
-    if (!PyArg_ParseTuple(args, "l", &n))
+    if (!PyArg_ParseTuple(args, PYTHON_NUMBER_FMT, &n))
     {
         return NULL;
     }
@@ -69,9 +69,8 @@ static PyObject* prime_miller_rabin(PyObject *self, PyObject *args)
     rounds = log2(n);
     for (i = 0; i < rounds; ++i)
     {
-        number a = (rand() + 2) % n;
         number tmp = d;
-        number mod = powmod(a, d, n);
+        number mod = powmod(randnum() % (n - 2) + 2, d, n);
 
         while (tmp != n - 1 && mod != 1 && mod != n - 1)
         {
@@ -91,7 +90,7 @@ static PyObject* prime_trivial(PyObject *self, PyObject *args)
     number n;
     int i, bound;
 
-    if (!PyArg_ParseTuple(args, "l", &n))
+    if (!PyArg_ParseTuple(args, PYTHON_NUMBER_FMT, &n))
     {
         return NULL;
     }
@@ -123,7 +122,7 @@ PyMODINIT_FUNC initprime(void)
     struct timeval tv;
 
     gettimeofday(&tv, NULL);
-    srand(tv.tv_sec + tv.tv_usec);
+    setrandseed(tv.tv_sec * tv.tv_usec);
 
     Py_InitModule("prime", PrimeMethods);
 }
