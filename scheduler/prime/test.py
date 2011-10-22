@@ -16,8 +16,13 @@ def test(left, right):
     errors = rabin - primes
 
     possible = len(rabin) - len(errors)
+    if len(primes) == possible:
+        percentage = 100
+    else:
+        percentage = int(possible / (len(primes) * 0.01))
+
     print 'Miller-Rabin: found %d%% (%d of %d)' % (
-        int(possible / (len(primes) * 0.01)),
+        percentage,
         possible,
         len(primes)
     )
