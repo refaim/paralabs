@@ -2,7 +2,7 @@
 
 OBJS = $(foreach wc, *.pyc *.pyd *.egg-info *.so, $(wildcard $(wc)))
 
-all: prime
+all: clean prime
 
 clean:
 	rm -rf build $(OBJS)
@@ -10,5 +10,5 @@ clean:
 prime:
 	cd prime && python setup.py install
 
-test: prime
+test: clean prime
 	python prime/test.py
