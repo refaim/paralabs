@@ -48,7 +48,7 @@ inline number powmod(number a, number k, number c)
 static PyObject* prime_miller_rabin(PyObject *self, PyObject *args)
 {
     number n, d;
-    int i, rounds;
+    int rounds;
 
     if (!PyArg_ParseTuple(args, PYTHON_NUMBER_FMT, &n))
     {
@@ -67,7 +67,7 @@ static PyObject* prime_miller_rabin(PyObject *self, PyObject *args)
     }
 
     rounds = log2(n);
-    for (i = 0; i < rounds; ++i)
+    while (rounds--)
     {
         number tmp = d;
         number mod = powmod(randnum() % (n - 2) + 2, d, n);
