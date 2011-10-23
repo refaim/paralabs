@@ -2,7 +2,7 @@
 
 static number next = 1;
 
-number randnum()
+number randnum(void)
 {
     next = next * 1103515245 + 12345;
     return next & NUMBER_MAX;

@@ -3,7 +3,7 @@
 
 #include "number.h"
 
-number randnum();
+number randnum(void);
 void setrandseed(number value);
 
 #endif
