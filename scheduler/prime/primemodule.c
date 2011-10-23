@@ -12,11 +12,11 @@ inline number mulmod(number a, number b, number c)
 
     while (b > 0)
     {
-        if (b & 1)
+        if (b % 2)
         {
             x = (x + y) % c;
         }
-        y = (y * 2) % c;
+        y = (y + y) % c;
         b >>= 1;
     }
     return x % c;
@@ -35,7 +35,7 @@ inline number powmod(number a, number k, number c)
 
     while (k > 0)
     {
-        if (k & 1)
+        if (k % 2)
         {
             x = mulmod(x, y, c);
         }
@@ -55,13 +55,13 @@ static PyObject* prime_miller_rabin(PyObject *self, PyObject *args)
         return NULL;
     }
 
-    if (!(n & 1) || n < 2)
+    if (n % 2 == 0 || n < 2)
     {
         return Py_BuildValue("i", n == 2);
     }
 
     d = n - 1;
-    while (!(d & 1))
+    while (d % 2 == 0)
     {
         d >>= 1;
     }
@@ -77,7 +77,7 @@ static PyObject* prime_miller_rabin(PyObject *self, PyObject *args)
             mod = sqrmod(mod, n);
             tmp <<= 1;
         }
-        if (mod != n - 1 && !(tmp & 1))
+        if (mod != n - 1 && tmp % 2 == 0)
         {
             return Py_BuildValue("i", 0);
         }
@@ -95,7 +95,7 @@ static PyObject* prime_trivial(PyObject *self, PyObject *args)
         return NULL;
     }
 
-    if (!(n & 1) || n < 2)
+    if (n % 2 == 0 || n < 2)
     {
         return Py_BuildValue("i", n == 2);
     }
