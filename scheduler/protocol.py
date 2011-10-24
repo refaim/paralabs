@@ -1,5 +1,5 @@
 CHUNK = 1024
-DEFAULT_TIMEOUT = 1.0 # seconds
+DEFAULT_TIMEOUT = 10.0 # seconds
 
 NUM_SEPARATOR = ','
 RANGE_FMT = '%d' + NUM_SEPARATOR + '%d'
