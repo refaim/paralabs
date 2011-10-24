@@ -1,23 +1,16 @@
 import sys
 import os
 import socket
+import time
 
 from utils import console
 
 import prime
 from common import *
+from protocol import *
 
 SERV_ADDR = None
 PROGRESS_ATOM = 20
-
-def connect():
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    try:
-        sock.connect(SERV_ADDR)
-    except socket.error, ex:
-        raise SchedulerError('[Error %d] %s' % ex.args)
-    return sock
-
 
 def main(args):
     global SERV_ADDR
@@ -29,32 +22,58 @@ def main(args):
         print 'Usage: client.py <host:port>'
         return 1
 
-    import time
-    while True:
-        sock = connect()
-        sock.send('Here')
+    pbar = None
+    try:
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.connect(SERV_ADDR)
 
-        left, right = tuple(int(x) for x in sock.recv(1024).split())
-        print 'Recieved [%d, %d]' % (left, right)
+        conn = Messenger(sock)
+        conn.send(MSG_HELLO)
+        conn.wait(MSG_HELLO)
+        print 'Connected to %s:%d' % SERV_ADDR
 
-        pbar = console.ProgressBar(right - left)
-        step = (right - left) / PROGRESS_ATOM
+        while True:
+            conn.wait(MSG_PREPARE)
+            conn.send(MSG_OK)
 
-        primes = []
-        for i, x in enumerate(xrange(left, right)):
-            if prime.miller_rabin(x):
-                primes.append(x)
-            if i % step == 0:
-                pbar.set(i)
-        pbar.finish()
-        pbar.clear()
+            rawrange = conn.getchunk().split(NUM_SEPARATOR)
+            conn.send(MSG_OK)
+            left, right = tuple(map(int, rawrange))
+            print 'Received %s' % rangestring((left, right))
 
-        print '%d prime numbers found' % len(primes)
+            pbar = console.ProgressBar(right - left)
+            step = (right - left) / PROGRESS_ATOM
 
-        sock.send(str(primes))
-        print 'Result sent'
+            conn.unsettimeout()
+            start = time.time()
+            primes = []
+            for i, x in enumerate(xrange(left, right)):
+                if prime.miller_rabin(x):
+                    primes.append(str(x))
+                if i % step == 0:
+                    pbar.set(i)
+            pbar.finish()
+            pbar.clear()
 
-        time.sleep(5)
+            print '%.3f seconds, %d prime numbers found' % (
+                time.time() - start, len(primes)
+            )
+            conn.settimeout()
+
+            conn.send(MSG_COMPLETED)
+            conn.wait(MSG_OK)
+
+            primes = ','.join(primes)
+            conn.send(str(len(primes)))
+            conn.wait(MSG_OK)
+
+            conn.send(primes)
+            conn.wait(MSG_OK)
+    except socket.error, ex:
+        handle_socket_error(ex)
+    finally:
+        if pbar:
+            pbar.clear()
 
 if __name__ == '__main__':
     try:
