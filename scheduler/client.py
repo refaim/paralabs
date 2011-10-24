@@ -44,7 +44,6 @@ def main(args):
             pbar = console.ProgressBar(right - left)
             step = (right - left) / PROGRESS_ATOM
 
-            conn.unsettimeout()
             start = time.time()
             primes = []
             for i, x in enumerate(xrange(left, right)):
@@ -58,7 +57,6 @@ def main(args):
             print '%.3f seconds, %d prime numbers found' % (
                 time.time() - start, len(primes)
             )
-            conn.settimeout()
 
             conn.send(MSG_COMPLETED)
             conn.wait(MSG_OK)
