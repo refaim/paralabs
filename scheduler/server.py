@@ -1,11 +1,10 @@
 ﻿import sys
 import os
 import SocketServer
+import threading
 
 from common import *
 from protocol import *
-
-RESULT_FILE = 'primes.txt'
 
 class Dispatcher(object):
     def __init__(self):
@@ -13,8 +12,10 @@ class Dispatcher(object):
         self.left = 1
         self.right = self.interval
 
-        if os.path.exists(RESULT_FILE):
-            os.remove(RESULT_FILE)
+        self.fout_lock = threading.Lock()
+        self.fout_name = 'primes.lst'
+        if os.path.exists(self.fout_name):
+            os.remove(self.fout_name)
 
     def get(self):
         bounds = self.left, self.right
@@ -23,21 +24,24 @@ class Dispatcher(object):
         return bounds
 
     def put(self, client, range_, primes):
-        print '%s %s => %d prime numbers' % (
+        tsprint('%s %s => %d prime numbers' % (
             client, rangestring(range_), len(primes)
-        )
-        with open(RESULT_FILE, 'a') as fout:
+        ))
+        self.fout_lock.acquire()
+        with open(self.fout_name, 'a') as fout:
             fout.write('\n'.join(primes))
+        self.fout_lock.release()
 
 
 class Server(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
     def handle_error(self, request, client):
         self.shutdown_request(request)
         extype, ex, _ = sys.exc_info()
+        client = '%s:%d' % client
         if extype is SchedulerError:
-            print ex.args[0]
+            tsprint('%s %s' % (client, ex.args[0]))
         else:
-            print '%s:%d disconnected' % client
+            tsprint('%s disconnected' % client)
             raise
 
 
@@ -46,14 +50,14 @@ class RequestHandler(SocketServer.BaseRequestHandler):
         conn = Messenger(self.request)
         conn.wait(MSG_HELLO)
         conn.send(MSG_HELLO)
-        print '%s connected' % conn.name()
+        tsprint('%s connected' % conn.name())
 
         while True:
             conn.send(MSG_PREPARE)
             conn.wait(MSG_OK)
 
             range_ = dispatcher.get()
-            print '%s <= %s' % (conn.name(), rangestring(range_))
+            tsprint('%s <= %s' % (conn.name(), rangestring(range_)))
             conn.send(RANGE_FMT % range_)
             conn.wait(MSG_OK)
 
@@ -70,6 +74,11 @@ class RequestHandler(SocketServer.BaseRequestHandler):
 
             dispatcher.put(conn.name(), range_, numbers)
 
+
+def tsprint(message):
+    stdout_lock.acquire()
+    print message
+    stdout_lock.release()
 
 def main(args):
     if not args:
@@ -88,6 +97,7 @@ def main(args):
 if __name__ == '__main__':
     try:
         dispatcher = Dispatcher()
+        stdout_lock = threading.Lock()
         sys.exit(main(sys.argv[1:]))
     except KeyboardInterrupt:
         print 'Interrupted by user'
