@@ -70,7 +70,7 @@ static PyObject* prime_miller_rabin(PyObject *self, PyObject *args)
     while (rounds--)
     {
         number tmp = d;
-        number mod = powmod(randnum() % (n - 2) + 2, d, n);
+        number mod = powmod(2 + randnum() % (n - 2), d, n);
 
         while (tmp != n - 1 && mod != 1 && mod != n - 1)
         {
