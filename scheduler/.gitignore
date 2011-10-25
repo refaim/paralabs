@@ -2,5 +2,6 @@
 build
 *.pyc
 *.pyd
+*.so
 *.egg-info
 primes.lst
