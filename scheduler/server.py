@@ -35,7 +35,8 @@ class Dispatcher(object):
 
 class Server(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
     def handle_error(self, request, client):
-        self.shutdown_request(request)
+        request.shutdown(socket.SHUT_RDWR)
+        request.close()
         extype, ex, _ = sys.exc_info()
         client = '%s:%d' % client
         if extype is SchedulerError:
@@ -47,7 +48,7 @@ class Server(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
 
 class RequestHandler(SocketServer.BaseRequestHandler):
     def handle(self):
-        conn = Messenger(self.request)
+        conn = ServerMessenger(self.request)
         conn.wait(MSG_HELLO)
         conn.send(MSG_HELLO)
         tsprint('%s connected' % conn.name())

@@ -23,11 +23,12 @@ def main(args):
         return 1
 
     pbar = None
+    conn = None
     try:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.connect(SERV_ADDR)
 
-        conn = Messenger(sock)
+        conn = ClientMessenger(sock)
         conn.send(MSG_HELLO)
         conn.wait(MSG_HELLO)
         print 'Connected to %s:%d' % SERV_ADDR
@@ -70,6 +71,8 @@ def main(args):
     except socket.error, ex:
         handle_socket_error(ex)
     finally:
+        if conn:
+            conn.send(MSG_BYE)
         if pbar:
             pbar.clear()
 

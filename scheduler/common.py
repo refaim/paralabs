@@ -31,28 +31,59 @@ class Messenger(object):
         try:
             return func(*args)
         except socket.timeout:
-            pass # only on client
+            pass
         except socket.error, ex:
             handle_socket_error(ex)
 
     def getchunk(self):
         return self._safe(self.sock.recv, CHUNK)
 
-    def send(self, message):
-        self._safe(self.sock.send, message)
-
-    def wait(self, message):
+    def wait(self, *messages):
         start = time.time()
         timeout = self.sock.gettimeout()
-        while self.getchunk() != message:
+        chunk = self.getchunk()
+        while chunk not in messages:
             if timeout and time.time() - start > timeout:
                 raise SchedulerError('%s timed out' % self.name())
+            chunk = self.getchunk()
+        return chunk
+
+    def send(self, message):
+        left = 0
+        for right in range(0, len(message), CHUNK):
+            self._safe(self.sock.send, message[left:right])
+            left = right
+        if left < len(message):
+            self._safe(self.sock.send, message[left:])
+
+    def name(self):
+        return '%s:%d' % self.sock.getpeername()
+
+    def close(self):
+        self.sock.shutdown(socket.SHUT_RDWR)
+        self.sock.close()
+
+    def settimeout(self):
+        self.sock.settimeout(DEFAULT_TIMEOUT)
+
+    def unsettimeout(self):
+        self.sock.settimeout(None)
+
+class ServerMessenger(Messenger):
+    def wait(self, *messages):
+        messages = list(messages) + [MSG_BYE]
+        message = super(ServerMessenger, self).wait(*messages)
+        if message == MSG_BYE:
+            raise SchedulerError('disconnected')
+        return message
 
     def getbytes(self, count):
         res = []
         recieved = 0
         while recieved != count:
             chunk = self.getchunk()
+            if chunk is None:
+                raise SchedulerError('%d %d' % (received, count))
             recieved += len(chunk)
             res.append(chunk)
         return ''.join(res)
@@ -63,14 +94,4 @@ class Messenger(object):
             res = self.getchunk()
         return int(res)
 
-    def name(self):
-        return '%s:%d' % self.sock.getpeername()
-
-    def close(self):
-        self.sock.close()
-
-    def settimeout(self):
-        self.sock.settimeout(DEFAULT_TIMEOUT)
-
-    def unsettimeout(self):
-        self.sock.settimeout(None)
+class ClientMessenger(Messenger): pass
