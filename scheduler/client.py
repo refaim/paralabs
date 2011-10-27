@@ -2,10 +2,12 @@ import sys
 import os
 import socket
 import time
+import pickle
 
 from utils import console
 
 import prime
+import hwinfo
 from common import *
 from protocol import *
 
@@ -32,6 +34,9 @@ def main(args):
         conn.send(MSG_HELLO)
         conn.wait(MSG_HELLO)
         print 'Connected to %s:%d' % SERV_ADDR
+
+        conn.wait(MSG_INFO)
+        conn.send(pickle.dumps(hwinfo.collect()))
 
         while True:
             conn.wait(MSG_PREPARE)

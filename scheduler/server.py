@@ -2,6 +2,7 @@
 import os
 import SocketServer
 import threading
+import pickle
 
 from common import *
 from protocol import *
@@ -11,6 +12,8 @@ class Dispatcher(object):
         self.interval = 10 ** 5
         self.left = 1
         self.right = self.interval
+
+        self.clients = {}
 
         self.fout_lock = threading.Lock()
         self.fout_name = 'primes.lst'
@@ -32,13 +35,22 @@ class Dispatcher(object):
             fout.write('\n'.join(primes))
         self.fout_lock.release()
 
+    def register(self, conn, info):
+        self.clients[conn.name()] = (conn, info)
+
+    def unregister(self, name):
+        del self.clients[name]
+
 
 class Server(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
     def handle_error(self, request, client):
         request.shutdown(socket.SHUT_RDWR)
         request.close()
-        extype, ex, _ = sys.exc_info()
+
         client = '%s:%d' % client
+        dispatcher.unregister(client)
+
+        extype, ex, _ = sys.exc_info()
         if extype is SchedulerError:
             tsprint('%s %s' % (client, ex.args[0]))
         else:
@@ -52,6 +64,10 @@ class RequestHandler(SocketServer.BaseRequestHandler):
         conn.wait(MSG_HELLO)
         conn.send(MSG_HELLO)
         tsprint('%s connected' % conn.name())
+
+        conn.send(MSG_INFO)
+        hwinfo = pickle.loads(conn.recv())
+        dispatcher.register(conn, hwinfo)
 
         while True:
             conn.send(MSG_PREPARE)
