@@ -69,6 +69,7 @@ class Messenger(object):
     def unsettimeout(self):
         self.sock.settimeout(None)
 
+
 class ServerMessenger(Messenger):
     def wait(self, *messages):
         messages = list(messages) + [MSG_BYE]
@@ -77,7 +78,14 @@ class ServerMessenger(Messenger):
             raise SchedulerError('disconnected')
         return message
 
-    def getbytes(self, count):
+    def recv(self):
+        size = self._getint()
+        self.send(MSG_OK)
+        data = self._getbytes(size)
+        self.send(MSG_OK)
+        return data
+
+    def _getbytes(self, count):
         res = []
         recieved = 0
         while recieved != count:
@@ -88,10 +96,19 @@ class ServerMessenger(Messenger):
             res.append(chunk)
         return ''.join(res)
 
-    def waitint(self):
+    def _getint(self):
         res = self.getchunk()
         while not res.isdigit():
             res = self.getchunk()
         return int(res)
 
-class ClientMessenger(Messenger): pass
+class ClientMessenger(Messenger):
+    def send(self, data):
+        send = lambda data: Messenger.send(self, data)
+        if data in MESSAGES:
+            send(data)
+        else:
+            send(str(len(data)))
+            self.wait(MSG_OK)
+            send(data)
+            self.wait(MSG_OK)

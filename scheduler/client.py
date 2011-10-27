@@ -63,11 +63,8 @@ def main(args):
             conn.wait(MSG_OK)
 
             primes = ','.join(primes)
-            conn.send(str(len(primes)))
-            conn.wait(MSG_OK)
-
             conn.send(primes)
-            conn.wait(MSG_OK)
+
     except socket.error, ex:
         handle_socket_error(ex)
     finally:

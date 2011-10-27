@@ -67,12 +67,7 @@ class RequestHandler(SocketServer.BaseRequestHandler):
             conn.settimeout()
             conn.send(MSG_OK)
 
-            ressize = conn.waitint()
-            conn.send(MSG_OK)
-
-            numbers = conn.getbytes(ressize).split(NUM_SEPARATOR)
-            conn.send(MSG_OK)
-
+            numbers = conn.recv().split(NUM_SEPARATOR)
             dispatcher.put(conn.name(), range_, numbers)
 
 
