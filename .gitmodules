@@ -1,3 +1,3 @@
 [submodule "scheduler/utils"]
-	path = scheduler/utils
-	url = git://github.com/refaim/python-utils.git
+    path = hydra/utils
+    url = git://github.com/refaim/python-utils.git
