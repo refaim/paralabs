@@ -84,5 +84,5 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         print 'Interrupted by user'
     except SchedulerError, ex:
-        print '%s: %s' % (os.path.basename(__file__), ex.args[0].lower())
+        print ex.args[0]
     sys.exit(1)
