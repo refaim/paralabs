@@ -77,13 +77,14 @@ def _cpuspeed():
         cmd = '%s %s' % (MACOS_SYSPROFILER, MACOS_SYSPROFILER_ARGS)
         profiler = subprocess.Popen(shlex.split(cmd), stdout=subprocess.PIPE)
         stdout, _ = profiler.communicate()
-        for line in stdout.splitlines():
-            match = re.search('Processor Speed: ([\d\.]+)', line)
-            if match:
-                freqghz = match.group(1)
-                freqmhz = float(freqghz) * 1000.0
-                for cpuid in range(psutil.NUM_CPUS):
-                    result[cpuid] = freqmhz
-                break
+        if stdout:
+            for line in stdout.splitlines():
+                match = re.search('Processor Speed: ([\d\.]+)', line)
+                if match:
+                    freqghz = match.group(1)
+                    freqmhz = float(freqghz) * 1000.0
+                    for cpuid in range(psutil.NUM_CPUS):
+                        result[cpuid] = freqmhz
+                    break
 
     return result
