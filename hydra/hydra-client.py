@@ -65,11 +65,15 @@ def main(args):
 
             start = time.time()
             primes = []
-            for i, x in enumerate(xrange(left, right)):
-                if prime.miller_rabin(x):
-                    primes.append(str(x))
-                if i % step == 0:
-                    pbar.set(i)
+            try:
+                for i, x in enumerate(xrange(left, right)):
+                    if prime.miller_rabin(x):
+                        primes.append(x)
+                    if i % step == 0:
+                        pbar.set(i)
+            except OverflowError:
+                print 'Too large range'
+                return 1
             pbar.finish()
             pbar.clear()
 

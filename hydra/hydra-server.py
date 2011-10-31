@@ -48,7 +48,7 @@ class Dispatcher(object):
             client, rangestring(range_), len(primes)
         ))
         with open(self.fout_name, 'a') as fout:
-            fout.write('\n'.join(primes))
+            fout.write('\n'.join(map(str, primes)))
 
     @synchronized(dispatcher_lock)
     def register(self, conn, info):
