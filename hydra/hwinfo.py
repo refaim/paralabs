@@ -69,8 +69,8 @@ def _cpuspeed():
             freqpath = os.path.join(LINUX_SYSCPU, 'cpu%d' % cpuid, 'cpufreq',
                 'cpuinfo_max_freq')
             if os.access(freqpath, os.R_OK):
-                freqhz = open(freqpath).read()
-                freqmhz = float(freqhz) / 1000.0
+                freqkhz = open(freqpath).read()
+                freqmhz = float(freqkhz) / 1000.0
                 result[int(cpuid)] = freqmhz
 
     MACOS_SYSPROFILER = '/usr/sbin/system_profiler'
