@@ -8,6 +8,7 @@ from utils import console
 
 import prime
 import hwinfo
+from messenger import ClientMessenger
 from common import *
 from protocol import *
 
