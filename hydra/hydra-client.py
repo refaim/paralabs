@@ -20,11 +20,13 @@ PROGRESS_ATOM = 20
 
 def set_low_priority():
     process = psutil.Process(os.getpid())
-    if platform.system() == 'Windows':
-        process.nice = psutil.IDLE_PRIORITY_CLASS
-    else:
-        process.nice = -10
-
+    try:
+        if platform.system() == 'Windows':
+            process.nice = psutil.BELOW_NORMAL_PRIORITY_CLASS
+        else:
+            process.nice = -10
+    except psutil.AccessDenied:
+        print 'Failed to lower process priority, continuing at normal priority'
 
 def main(args):
     global SERV_ADDR
@@ -35,8 +37,6 @@ def main(args):
     else:
         print 'Usage: client.py <host:port>'
         return 1
-
-    set_low_priority()
 
     pbar = None
     conn = None
@@ -52,6 +52,7 @@ def main(args):
         conn.wait(MSG_INFO)
         conn.send(json.dumps(hwinfo.collect()))
 
+        set_low_priority()
         while True:
             conn.wait(MSG_PREPARE)
             conn.send(MSG_OK)
