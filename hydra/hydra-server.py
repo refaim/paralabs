@@ -102,7 +102,7 @@ class RequestHandler(SocketServer.BaseRequestHandler):
             conn.settimeout()
             conn.send(MSG_OK)
 
-            numbers = conn.recv().split(NUM_SEPARATOR)
+            numbers = json.loads(conn.recv())
             dispatcher.put(conn.name(), range_, numbers)
 
 
