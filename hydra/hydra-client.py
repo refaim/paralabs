@@ -20,13 +20,10 @@ PROGRESS_ATOM = 20
 
 def set_low_priority():
     process = psutil.Process(os.getpid())
-    try:
-        if platform.system() == 'Windows':
-            process.nice = psutil.BELOW_NORMAL_PRIORITY_CLASS
-        else:
-            process.nice = -10
-    except psutil.AccessDenied:
-        print 'Failed to lower process priority, continuing at normal priority'
+    if platform.system() == 'Windows':
+        process.nice = psutil.IDLE_PRIORITY_CLASS
+    else:
+        process.nice = 19
 
 def main(args):
     global SERV_ADDR
