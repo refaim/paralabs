@@ -56,7 +56,10 @@ class Dispatcher(object):
 
     @synchronized(dispatcher_lock)
     def unregister(self, name):
-        del self.clients[name]
+        try:
+            del self.clients[name]
+        except KeyError:
+            pass
 
 
 class Server(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
