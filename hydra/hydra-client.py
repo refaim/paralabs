@@ -2,7 +2,7 @@ import sys
 import os
 import socket
 import time
-import pickle
+import json
 
 from utils import console
 
@@ -36,15 +36,13 @@ def main(args):
         print 'Connected to %s:%d' % SERV_ADDR
 
         conn.wait(MSG_INFO)
-        conn.send(pickle.dumps(hwinfo.collect()))
+        conn.send(json.dumps(hwinfo.collect()))
 
         while True:
             conn.wait(MSG_PREPARE)
             conn.send(MSG_OK)
 
-            rawrange = conn.getchunk().split(NUM_SEPARATOR)
-            conn.send(MSG_OK)
-            left, right = tuple(map(int, rawrange))
+            left, right = json.loads(conn.recv())
             print 'Received %s' % rangestring((left, right))
 
             pbar = console.ProgressBar(right - left)
@@ -67,8 +65,7 @@ def main(args):
             conn.send(MSG_COMPLETED)
             conn.wait(MSG_OK)
 
-            primes = ','.join(primes)
-            conn.send(primes)
+            conn.send(json.dumps(primes))
 
     except socket.error, ex:
         handle_socket_error(ex)

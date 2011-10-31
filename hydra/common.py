@@ -48,13 +48,46 @@ class Messenger(object):
             chunk = self.getchunk()
         return chunk
 
-    def send(self, message):
+    def _getbytes(self, count):
+        res = []
+        recieved = 0
+        while recieved != count:
+            chunk = self.getchunk()
+            if chunk is None:
+                raise SchedulerError('%d %d' % (received, count))
+            recieved += len(chunk)
+            res.append(chunk)
+        return ''.join(res)
+
+    def _getint(self):
+        res = self.getchunk()
+        while not res.isdigit():
+            res = self.getchunk()
+        return int(res)
+
+    def recv(self):
+        size = self._getint()
+        self.send(MSG_OK)
+        data = self._getbytes(size)
+        self.send(MSG_OK)
+        return data
+
+    def _inner_send(self, data):
         left = 0
-        for right in range(0, len(message), CHUNK):
-            self._safe(self.sock.send, message[left:right])
+        for right in range(0, len(data), CHUNK):
+            self._safe(self.sock.send, data[left:right])
             left = right
-        if left < len(message):
-            self._safe(self.sock.send, message[left:])
+        if left < len(data):
+            self._safe(self.sock.send, data[left:])
+
+    def send(self, data):
+        if data in MESSAGES:
+            self._inner_send(data)
+        else:
+            self._inner_send(str(len(data)))
+            self.wait(MSG_OK)
+            self._inner_send(data)
+            self.wait(MSG_OK)
 
     def name(self):
         return '%s:%d' % self.sock.getpeername()
@@ -78,37 +111,4 @@ class ServerMessenger(Messenger):
             raise SchedulerError('disconnected')
         return message
 
-    def recv(self):
-        size = self._getint()
-        self.send(MSG_OK)
-        data = self._getbytes(size)
-        self.send(MSG_OK)
-        return data
-
-    def _getbytes(self, count):
-        res = []
-        recieved = 0
-        while recieved != count:
-            chunk = self.getchunk()
-            if chunk is None:
-                raise SchedulerError('%d %d' % (received, count))
-            recieved += len(chunk)
-            res.append(chunk)
-        return ''.join(res)
-
-    def _getint(self):
-        res = self.getchunk()
-        while not res.isdigit():
-            res = self.getchunk()
-        return int(res)
-
-class ClientMessenger(Messenger):
-    def send(self, data):
-        send = lambda data: Messenger.send(self, data)
-        if data in MESSAGES:
-            send(data)
-        else:
-            send(str(len(data)))
-            self.wait(MSG_OK)
-            send(data)
-            self.wait(MSG_OK)
+class ClientMessenger(Messenger): pass

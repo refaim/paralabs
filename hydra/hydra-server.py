@@ -2,7 +2,7 @@
 import os
 import SocketServer
 import threading
-import pickle
+import json
 
 from common import *
 from protocol import *
@@ -81,7 +81,7 @@ class RequestHandler(SocketServer.BaseRequestHandler):
         tsprint('%s connected' % conn.name())
 
         conn.send(MSG_INFO)
-        hwinfo = pickle.loads(conn.recv())
+        hwinfo = json.loads(conn.recv())
         dispatcher.register(conn, hwinfo)
 
         while True:
@@ -90,8 +90,7 @@ class RequestHandler(SocketServer.BaseRequestHandler):
 
             range_ = dispatcher.get()
             tsprint('%s <= %s' % (conn.name(), rangestring(range_)))
-            conn.send(RANGE_FMT % range_)
-            conn.wait(MSG_OK)
+            conn.send(json.dumps(range_))
 
             conn.unsettimeout()
             conn.wait(MSG_COMPLETED)
