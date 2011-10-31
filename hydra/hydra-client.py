@@ -3,6 +3,9 @@ import os
 import socket
 import time
 import json
+import platform
+
+import psutil
 
 from utils import console
 
@@ -15,9 +18,13 @@ from protocol import *
 SERV_ADDR = None
 PROGRESS_ATOM = 20
 
-MIN_CPU_LOAD = 50.0
-CPU_FREE_INTERVAL = 1.0
-CPU_LOAD_CHECK_INTERVAL = 5.0
+def set_low_priority():
+    process = psutil.Process(os.getpid())
+    if platform.system() == 'Windows':
+        process.nice = psutil.IDLE_PRIORITY_CLASS
+    else:
+        process.nice = -10
+
 
 def main(args):
     global SERV_ADDR
@@ -28,6 +35,8 @@ def main(args):
     else:
         print 'Usage: client.py <host:port>'
         return 1
+
+    set_low_priority()
 
     pbar = None
     conn = None
@@ -60,17 +69,6 @@ def main(args):
                     primes.append(str(x))
                 if i % step == 0:
                     pbar.set(i)
-                    time.sleep(CPU_FREE_INTERVAL)
-                    load = hwinfo.least_loaded_core()
-                    suspend = False
-                    if load > MIN_CPU_LOAD:
-                        console.writeline('Suspending process due to user activity...', end='\n')
-                        suspend = True
-                    while load > MIN_CPU_LOAD:
-                        time.sleep(CPU_LOAD_CHECK_INTERVAL)
-                        load = hwinfo.least_loaded_core()
-                    if suspend:
-                        console.writeline('Resuming process...', end='\n')
             pbar.finish()
             pbar.clear()
 

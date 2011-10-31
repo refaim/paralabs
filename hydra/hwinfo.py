@@ -17,9 +17,6 @@ def collect():
         'cpu': _cpuspeed(),
     }
 
-def least_loaded_core(interval=0):
-    return min(psutil.cpu_percent(percpu=True, interval=interval))
-
 def _memoryusage():
     mem = psutil.phymem_usage()
     return {
