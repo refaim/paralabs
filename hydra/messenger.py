@@ -8,6 +8,7 @@ class Messenger(object):
     def __init__(self, sock):
         self.sock = sock
         self.settimeout()
+        self.chunks = []
 
     def _safe(self, func, *args):
         try:
@@ -18,7 +19,19 @@ class Messenger(object):
             handle_socket_error(ex)
 
     def getchunk(self):
-        return self._safe(self.sock.recv, CHUNK)
+        if self.chunks:
+            chunk = self.chunks.pop(0)
+        else:
+            chunk = self._safe(self.sock.recv, CHUNK)
+            if isinstance(chunk, basestring):
+                chunk = chunk.strip('\n')
+            if chunk:
+                #print 'GET %s' % str(chunk).replace('\n', '\\n')
+                messages = chunk.split('\n')
+                if len(messages) > 1:
+                    self.chunks.extend(messages[1:])
+                chunk = messages[0]
+        return chunk
 
     def wait(self, *messages):
         start = time.time()
@@ -35,8 +48,6 @@ class Messenger(object):
         recieved = 0
         while recieved != count:
             chunk = self.getchunk()
-            if chunk is None:
-                raise SchedulerError('%d %d' % (received, count))
             recieved += len(chunk)
             res.append(chunk)
         return ''.join(res)
@@ -55,12 +66,15 @@ class Messenger(object):
         return data
 
     def _inner_send(self, data):
+        #print 'SEND %s' % str(data)
         left = 0
         for right in range(0, len(data), CHUNK):
             self._safe(self.sock.send, data[left:right])
             left = right
         if left < len(data):
-            self._safe(self.sock.send, data[left:])
+            self._safe(self.sock.send, data[left:] + '\n')
+        else:
+            self._safe(self.sock.send, '\n')
 
     def send(self, data):
         if data in MESSAGES:
