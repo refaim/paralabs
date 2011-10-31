@@ -7,6 +7,20 @@ import pickle
 from common import *
 from protocol import *
 
+
+def synchronized(lock):
+    def wrap(func):
+        def inner(*args, **kwargs):
+            lock.acquire()
+            try:
+                return func(*args, **kwargs)
+            finally:
+                lock.release()
+        return inner
+    return wrap
+
+dispatcher_lock = threading.Lock()
+
 class Dispatcher(object):
     def __init__(self):
         self.interval = 10 ** 5
@@ -15,29 +29,30 @@ class Dispatcher(object):
 
         self.clients = {}
 
-        self.fout_lock = threading.Lock()
         self.fout_name = 'primes.lst'
         if os.path.exists(self.fout_name):
             os.remove(self.fout_name)
 
+    @synchronized(dispatcher_lock)
     def get(self):
         bounds = self.left, self.right
         self.left = self.right
         self.right += self.interval
         return bounds
 
+    @synchronized(dispatcher_lock)
     def put(self, client, range_, primes):
         tsprint('%s %s => %d prime numbers' % (
             client, rangestring(range_), len(primes)
         ))
-        self.fout_lock.acquire()
         with open(self.fout_name, 'a') as fout:
             fout.write('\n'.join(primes))
-        self.fout_lock.release()
 
+    @synchronized(dispatcher_lock)
     def register(self, conn, info):
         self.clients[conn.name()] = (conn, info)
 
+    @synchronized(dispatcher_lock)
     def unregister(self, name):
         del self.clients[name]
 
