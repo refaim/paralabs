@@ -1,21 +1,15 @@
-.PHONY: all clean prime test executables
+.PHONY: all clean executables
 
-OBJS = $(foreach wc, *.pyc *.pyd *.egg-info *.so, $(wildcard $(wc)))
+OBJS = $(wildcard *.pyc)
 BUILD_DIR = build
 
-all: clean prime
+all: executables
 
 clean:
-	rm -rf $(BUILD_DIR) $(OBJS) primes.lst
-
-prime:
-	cd prime && python setup.py install
-
-test: clean prime
-	python prime/test.py
+	$(RM) -r $(BUILD_DIR) $(OBJS) primes.lst
 
 $(BUILD_DIR):
 	mkdir $@
 
-executables: clean prime | $(BUILD_DIR)
+executables: clean | $(BUILD_DIR)
 	cd $(BUILD_DIR) && cmake -G "Unix Makefiles" .. && make

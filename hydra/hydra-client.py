@@ -4,12 +4,13 @@ import socket
 import time
 import json
 import platform
+import operator
 
+import gmpy2
 import psutil
 
 from utils import console
 
-import prime
 import hwinfo
 from messenger import ClientMessenger
 from common import *
@@ -17,6 +18,16 @@ from protocol import *
 
 SERV_ADDR = None
 PROGRESS_ATOM = 20
+
+def longrange(start, stop, step=1):
+    if step == 0:
+        raise ValueError('Step == 0')
+
+    proceed = operator.gt if step < 0 else operator.lt
+
+    while proceed(start, stop):
+        yield start
+        start += step
 
 def set_low_priority():
     process = psutil.Process(os.getpid())
@@ -62,15 +73,11 @@ def main(args):
 
             start = time.time()
             primes = []
-            try:
-                for i, x in enumerate(xrange(left, right)):
-                    if prime.miller_rabin(x):
-                        primes.append(x)
-                    if i % step == 0:
-                        pbar.set(i)
-            except OverflowError:
-                print 'Too large range'
-                return 1
+            for i, x in enumerate(longrange(left, right)):
+                if gmpy2.mpz(x).is_prime():
+                    primes.append(x)
+                if i % step == 0:
+                    pbar.set(i)
             pbar.finish()
             pbar.clear()
 
