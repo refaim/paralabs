@@ -1,6 +1,6 @@
 .PHONY: all clean
 
-CFLAGS += -Wall -Wextra -pedantic -std=c99 -I../include
+CFLAGS += -Wall -Wextra -pedantic -std=c99
 CHECK_LDFLAGS = -Wl,--whole-archive -lcheck -Wl,--no-whole-archive
 
 PREFIX = task
@@ -12,7 +12,7 @@ clean:
 	$(RM) $(BINARIES)
 
 define define_task
-$(1): $(1).c ../include/common.c $(3)
+$(1): $(1).c common.c $(3)
 	$(CC) -o $$@ $(CFLAGS)$(2) $(LDFLAGS) $$^
 endef
 
