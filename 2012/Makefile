@@ -11,7 +11,7 @@ clean:
 	$(RM) $(BINARIES)
 
 define define_task
-$(1): $(1).c
+$(1): $(1).c bank/event.c
 	$(CC) -o $$@ $(CFLAGS) $$^
 endef
 
